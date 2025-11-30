@@ -1,0 +1,37 @@
+USE `hotel_db`;
+
+-- ===================================
+-- 🛠️ COMANDOS UPDATE (Mínimo 3 com condições)
+-- ===================================
+
+-- 1. Aumenta em 10% o preço de todos os quartos da categoria 'Standard'.
+UPDATE Quarto
+SET preco_noite = preco_noite * 1.10
+WHERE categoria = 'Standard';
+
+-- 2. Altera o cargo de um funcionário específico (Ana Santos) para 'Gerente de Recepção Sênior'.
+UPDATE Funcionarios
+SET cargo_funcionario = 'Gerente de Recepção Sênior'
+WHERE nome_funcionario = 'Ana Santos';
+
+-- 3. Altera a data de checkout e o status de uma reserva específica (ID 3).
+UPDATE Reserva
+SET data_checkout = '2026-01-09', status = 'Alterada'
+WHERE id_reserva = 3 AND status = 'Confirmada';
+
+-- ===================================
+-- 🗑️ COMANDOS DELETE (Mínimo 3 com condições)
+-- ===================================
+
+-- 1. Remove um serviço específico (Lavanderia Rápida) dos detalhes da Reserva ID 1.
+DELETE FROM Detalhe_Reserva
+WHERE id_reserva = 1 AND id_servico = 2;
+
+-- 2. Remove todos os funcionários que possuem o cargo 'Segurança Noturno'.
+DELETE FROM Funcionarios
+WHERE cargo_funcionario = 'Segurança Noturno';
+
+-- 3. Remove a Reserva ID 4 (Roberto Mendes) e seus serviços associados (Detalhe_Reserva).
+-- É necessário remover primeiro os detalhes para evitar erro de chave estrangeira.
+DELETE FROM Detalhe_Reserva WHERE id_reserva = 4;
+DELETE FROM Reserva WHERE id_reserva = 4;

@@ -1,0 +1,77 @@
+USE `hotel_db`;
+
+-- ===================================
+-- 🔎 CONSULTAS SELECT (Mínimo 2, mas 5 com cláusulas avançadas)
+-- ===================================
+
+-- 1. Listar as 3 reservas de maior valor de quarto, ordenadas.
+SELECT
+    R.id_reserva AS 'ID Reserva',
+    H.nome_hospede AS 'Hóspede',
+    Q.numero_quarto AS 'Quarto',
+    Q.preco_noite AS 'Preço por Noite'
+FROM
+    Reserva R
+INNER JOIN
+    Hospede H ON R.id_hospede = H.id_hospede
+INNER JOIN
+    Quarto Q ON R.id_quarto = Q.id_quarto
+ORDER BY
+    Q.preco_noite DESC
+LIMIT
+    3;
+
+-- 2. Detalhes de serviços solicitados por um hóspede específico (João Silva).
+SELECT
+    H.nome_hospede AS 'Hóspede',
+    S.nome_servico AS 'Serviço Solicitado',
+    DR.quantidade_servico_solicitado AS 'Quantidade'
+FROM
+    Detalhe_Reserva DR
+INNER JOIN
+    Reserva R ON DR.id_reserva = R.id_reserva
+INNER JOIN
+    Servico S ON DR.id_servico = S.id_servico
+INNER JOIN
+    Hospede H ON R.id_hospede = H.id_hospede
+WHERE
+    H.nome_hospede = 'João Silva';
+
+-- 3. Listar todos os funcionários que são 'Gerente' (ou qualquer cargo que comece com 'Gerente'), ordenados por nome.
+SELECT
+    nome_funcionario AS 'Nome',
+    cargo_funcionario AS 'Cargo',
+    telefone_funcionario AS 'Telefone'
+FROM
+    Funcionarios
+WHERE
+    cargo_funcionario LIKE 'Gerente%'
+ORDER BY
+    nome_funcionario ASC;
+
+-- 4. Mostrar todas as reservas 'Confirmadas' que farão Check-in em Dezembro.
+SELECT
+    R.id_reserva AS 'ID',
+    H.nome_hospede AS 'Hóspede',
+    R.data_checkin AS 'Check-in'
+FROM
+    Reserva R
+INNER JOIN
+    Hospede H ON R.id_hospede = H.id_hospede
+WHERE
+    R.status = 'Confirmada'
+    AND R.data_checkin BETWEEN '2025-12-01' AND '2025-12-31';
+
+-- 5. Listar hóspedes que não moram em São Paulo, mostrando sua cidade e estado.
+SELECT
+    H.nome_hospede AS 'Hóspede',
+    E.cidade AS 'Cidade de Residência',
+    E.estado AS 'Estado'
+FROM
+    Hospede H
+INNER JOIN
+    Endereco E ON H.id_endereco = E.id_endereco
+WHERE
+    E.cidade != 'São Paulo'
+ORDER BY
+    E.cidade;

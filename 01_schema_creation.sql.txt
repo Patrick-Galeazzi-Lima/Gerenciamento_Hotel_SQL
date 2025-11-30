@@ -1,0 +1,94 @@
+-- 1. Cria o Banco de Dados (Schema)
+CREATE SCHEMA IF NOT EXISTS `hotel_db`;
+USE `hotel_db`;
+
+-- 2. Tabela Endereco
+CREATE TABLE `Endereco` (
+    `id_endereco` INT NOT NULL AUTO_INCREMENT,
+    `Rua` VARCHAR(255) NOT NULL,
+    `numero` VARCHAR(10) NOT NULL,
+    `cidade` VARCHAR(100) NOT NULL,
+    `estado` VARCHAR(100) NOT NULL,
+    PRIMARY KEY (`id_endereco`)
+);
+
+-- 3. Tabela Hospede
+CREATE TABLE `Hospede` (
+    `id_hospede` INT NOT NULL AUTO_INCREMENT,
+    `nome_hospede` VARCHAR(255) NOT NULL,
+    `data_nascimento` DATE,
+    `email` VARCHAR(255) UNIQUE,
+    `telefone` VARCHAR(20),
+    `id_endereco` INT NOT NULL,
+    PRIMARY KEY (`id_hospede`),
+    FOREIGN KEY (`id_endereco`) REFERENCES `Endereco`(`id_endereco`)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+);
+
+-- 4. Tabela Funcionarios
+CREATE TABLE `Funcionarios` (
+    `id_funcionario` INT NOT NULL AUTO_INCREMENT,
+    `nome_funcionario` VARCHAR(255) NOT NULL,
+    `cargo_funcionario` VARCHAR(100),
+    `email_funcionario` VARCHAR(255) UNIQUE,
+    `telefone_funcionario` VARCHAR(20),
+    PRIMARY KEY (`id_funcionario`)
+);
+
+-- 5. Tabela Quarto
+CREATE TABLE `Quarto` (
+    `id_quarto` INT NOT NULL AUTO_INCREMENT,
+    `numero_quarto` VARCHAR(10) NOT NULL UNIQUE,
+    `categoria` VARCHAR(50) NOT NULL,
+    `descricao_tipo_quarto` TEXT,
+    `preco_noite` DECIMAL(10, 2) NOT NULL,
+    PRIMARY KEY (`id_quarto`)
+);
+
+-- 6. Tabela Servico
+CREATE TABLE `Servico` (
+    `id_servico` INT NOT NULL AUTO_INCREMENT,
+    `nome_servico` VARCHAR(100) NOT NULL,
+    `descricao_servico` TEXT,
+    `preco_servico` DECIMAL(10, 2) NOT NULL,
+    PRIMARY KEY (`id_servico`)
+);
+
+-- 7. Tabela Reserva
+CREATE TABLE `Reserva` (
+    `id_reserva` INT NOT NULL AUTO_INCREMENT,
+    `data_reserva` DATETIME NOT NULL,
+    `data_checkin` DATE NOT NULL,
+    `data_checkout` DATE NOT NULL,
+    `id_hospede` INT NOT NULL,
+    `id_quarto` INT NOT NULL,
+    `id_funcionario` INT NOT NULL,
+    `status` VARCHAR(50) DEFAULT 'Confirmada',
+    PRIMARY KEY (`id_reserva`),
+    FOREIGN KEY (`id_hospede`) REFERENCES `Hospede`(`id_hospede`)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE,
+    FOREIGN KEY (`id_quarto`) REFERENCES `Quarto`(`id_quarto`)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE,
+    FOREIGN KEY (`id_funcionario`) REFERENCES `Funcionarios`(`id_funcionario`)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+);
+
+-- 8. Tabela Detalhe_Reserva (Tabela N:M entre Reserva e Servico)
+CREATE TABLE `Detalhe_Reserva` (
+    `id_detalhe` INT NOT NULL AUTO_INCREMENT,
+    `id_reserva` INT NOT NULL,
+    `id_servico` INT NOT NULL,
+    `quantidade_servico_solicitado` INT NOT NULL DEFAULT 1,
+    PRIMARY KEY (`id_detalhe`),
+    UNIQUE KEY `uk_reserva_servico` (`id_reserva`, `id_servico`),
+    FOREIGN KEY (`id_reserva`) REFERENCES `Reserva`(`id_reserva`)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    FOREIGN KEY (`id_servico`) REFERENCES `Servico`(`id_servico`)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+);
